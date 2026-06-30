@@ -1,0 +1,224 @@
+================================================================
+  CineFlix SQL Analytics Project — SAMPLE OUTPUTS
+  Author: Arif Bin Mushtaq (MSC Statistics, UOD)
+  Database: MySQL (Sakila-derived schema)
+  Version: 1.0 | June 2025
+================================================================
+
+
+----------------------------------------------------------------
+OUTPUT 1: Most Popular Film Genre by Total Rentals
+----------------------------------------------------------------
+
+genre          | total_rentals
+---------------|---------------
+Sports         | 1179
+Animation      | 1166
+Action         | 1112
+Sci-Fi         | 1101
+Family         | 1096
+Drama          | 1060
+Documentary    | 1050
+Foreign        | 1033
+Games          |  969
+Children       |  945
+
+Insight: Sports leads all genres with 1,179 rentals, closely followed by
+Animation (1,166) and Action (1,112). These three genres should be prioritized
+in procurement and promotional campaigns.
+
+
+----------------------------------------------------------------
+OUTPUT 2: Customers Who Rented More Than the Average
+(Partial — top 20 shown)
+----------------------------------------------------------------
+
+customer_id | customer_name       | total_rentals
+------------|---------------------|---------------
+148         | ELEANOR HUNT        | 46
+526         | KARL SEAL           | 45
+236         | MARCIA DEAN         | 42
+144         | CLARA SHAW          | 42
+75          | TAMMY SANDERS       | 41
+197         | SUE PETERS          | 40
+469         | WESLEY BULL         | 40
+468         | TIM CARY            | 39
+137         | RHONDA KENNEDY      | 39
+178         | MARION SNYDER       | 39
+459         | TOMMY COLLAZO       | 38
+295         | DAISY BATES         | 38
+5           | ELIZABETH BROWN     | 38
+410         | CURTIS IRBY         | 38
+257         | MARSHA DOUGLAS      | 37
+176         | JUNE CARROLL        | 37
+198         | ELSIE KELLEY        | 37
+366         | BRANDON HUEY        | 37
+267         | MARGIE WADE         | 36
+439         | ALEXANDER FENNELL   | 36
+
+Insight: Eleanor Hunt (ID 148) leads with 46 rentals, well above the portfolio
+average. These customers are strong candidates for premium membership upgrades.
+
+
+----------------------------------------------------------------
+OUTPUT 3: Total Spend per Customer (Including Zero-Spend)
+(Partial — top 20 shown)
+----------------------------------------------------------------
+
+customer_id | customer_name       | total_spent
+------------|---------------------|------------------
+526         | KARL SEAL           | $221.55
+148         | ELEANOR HUNT        | $216.54
+144         | CLARA SHAW          | $195.58
+137         | RHONDA KENNEDY      | $194.61
+178         | MARION SNYDER       | $194.61
+459         | TOMMY COLLAZO       | $186.62
+469         | WESLEY BULL         | $177.60
+468         | TIM CARY            | $175.61
+236         | MARCIA DEAN         | $175.58
+181         | ANA BRADLEY         | $174.66
+176         | JUNE CARROLL        | $173.63
+259         | LENA JENSEN         | $170.67
+50          | DIANE COLLINS       | $169.65
+522         | ARNOLD HAVENS       | $167.67
+410         | CURTIS IRBY         | $167.62
+403         | MIKE WAY            | $166.65
+295         | DAISY BATES         | $162.62
+209         | TONYA CHAPMAN       | $161.68
+373         | LOUIS LEONE         | $161.65
+470         | GORDON ALLARD       | $160.68
+
+Insight: Karl Seal tops lifetime spend at $221.55. Customers with $0.00 spend
+(at the bottom of the full result set) are targets for win-back promotions.
+
+
+----------------------------------------------------------------
+OUTPUT 4: Film Count per Category (Including Empty Categories)
+----------------------------------------------------------------
+
+category_id | category_name  | film_count
+------------|----------------|------------
+15          | Sports         | 74
+9           | Foreign        | 73
+8           | Family         | 69
+6           | Documentary    | 68
+2           | Animation      | 66
+1           | Action         | 64
+13          | New            | 63
+7           | Drama          | 62
+10          | Games          | 61
+14          | Sci-Fi         | 61
+3           | Children       | 60
+5           | Comedy         | 58
+4           | Classics       | 57
+16          | Travel         | 57
+11          | Horror         | 56
+12          | Music          | 51
+17          | Romance        | 0
+18          | Fiction        | 0
+19          | War            | 0
+20          | Mystery        | 0
+
+Insight: Romance, Fiction, War, and Mystery have zero films assigned — clear
+catalogue gaps requiring immediate content acquisition attention.
+
+
+----------------------------------------------------------------
+OUTPUT 5: Films with Above-Average Rental Rates
+(Partial — first 3 rows shown; full result contains many more films)
+----------------------------------------------------------------
+
+film_id | title               | rental_rate | rate_above_avg
+--------|---------------------|-------------|----------------
+1       | ACADEMY DINOSAUR    | $4.99       | $1.73
+8       | AIRPORT POLLOCK     | $4.99       | $1.73
+13      | ALI FOREVER         | $4.99       | $1.73
+...     | ...                 | ...         | ...
+
+Insight: The portfolio average rental rate is approximately $3.26. All films
+shown are priced at $4.99, placing them $1.73 above average — candidates for
+promotional discounting analysis.
+
+
+----------------------------------------------------------------
+OUTPUT 6: Revenue Generated per Store
+----------------------------------------------------------------
+
+store_id | store_city  | store_country | total_revenue | total_rentals
+---------|-------------|----------------|---------------|---------------
+2        | Woodridge   | Australia      | $33,726.77    | 7,311
+1        | Lethbridge  | Canada         | $33,089.74    | 7,160
+
+Insight: Store 2 (Woodridge, Australia) leads in both revenue and rental volume.
+The gap between stores is relatively small (~$637), suggesting balanced
+performance; however Store 2 handles 151 more rentals.
+
+
+----------------------------------------------------------------
+OUTPUT 7: Top 10 Actors by Film Appearances
+----------------------------------------------------------------
+
+actor_id | actor_name           | film_count
+---------|----------------------|------------
+107      | Gina Degeneres       | 42
+102      | Walter Torn          | 41
+198      | Mary Keitel          | 40
+181      | Matthew Carrey       | 39
+23       | Sandra Kilmer        | 37
+...      | ...                  | ...
+
+Insight: Gina Degeneres leads with 42 film appearances, making her the top
+choice for franchise-style marketing materials and audience recognition campaigns.
+
+
+----------------------------------------------------------------
+OUTPUT 8: Currently Unreturned Rentals (Open Returns)
+(Partial — top 3 most overdue shown)
+----------------------------------------------------------------
+
+rental_id | film_title        | customer_name    | days_out
+----------|-------------------|------------------|----------
+11496     | HAWKS ALTER       | Sally Pierce     | 6821
+11541     | MASSACRE USUAL    | Dee Poe          | 6821
+11563     | WIFE TURN         | Yvonne Watkins   | 6820
+
+Insight: Several rentals have been open for over 6,800 days — extremely
+overdue items. Immediate follow-up with these customers is required to recover
+inventory or collect replacement costs.
+
+
+----------------------------------------------------------------
+OUTPUT 9: Inventory Utilisation Rate per Film per Store
+(Top 3 shown — full result shows 15 rows)
+----------------------------------------------------------------
+
+title                 | store_id | copies_available | times_rented | rentals_per_copy
+----------------------|----------|------------------|--------------|------------------
+FORWARD TEMPLE        | 1        | 1                | 27           | 27.0
+BUCKET BROTHERHOOD    | 1        | 2                | 34           | 17.0
+ROCKETEER MOTHER      | 2        | 2                | 30           | 15.0
+
+Insight: FORWARD TEMPLE has the highest utilisation at 27 rentals per copy —
+a critical undersupply risk. Additional copies should be ordered immediately.
+BUCKET BROTHERHOOD and ROCKETEER MOTHER also show high demand.
+
+
+----------------------------------------------------------------
+OUTPUT 10: Monthly Revenue Trend
+(Partial — first 3 months shown)
+----------------------------------------------------------------
+
+month_label | transactions | monthly_revenue | avg_transaction_value
+------------|--------------|-----------------|------------------------
+May 2005    | 4,824        | $14,949.09      | $3.10
+Jun 2005    | 9,340        | $28,373.89      | $3.04
+Jul 2005    | 6,709        | $20,397.78      | $3.04
+
+Insight: June 2005 shows the highest transaction volume (9,340) and revenue
+($28,373.89) in the sample, suggesting a seasonal peak. Average transaction
+values are stable around $3.04–$3.10 across months.
+
+
+================================================================
+  END OF SAMPLE OUTPUTS
+================================================================

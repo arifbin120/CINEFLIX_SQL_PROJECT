@@ -1,0 +1,219 @@
+================================================================
+  CineFlix SQL Analytics Project — INPUT QUERIES
+  Author: Arif Bin Mushtaq (MSC Statistics, UOD)
+  Database: MySQL (Sakila-derived schema)
+  Version: 1.0 | June 2025
+================================================================
+
+
+----------------------------------------------------------------
+QUERY 1: Most Popular Film Genre by Total Rentals
+Business Problem: The procurement team needs to know which genre drives the most
+rental activity across all stores, so they can prioritize reordering and marketing
+budget allocation.
+----------------------------------------------------------------
+
+SELECT
+    c.name                  AS genre,
+    COUNT(r.rental_id)      AS total_rentals
+FROM rental r
+JOIN inventory     i   ON r.inventory_id   = i.inventory_id
+JOIN film_category fc  ON i.film_id        = fc.film_id
+JOIN category      c   ON fc.category_id   = c.category_id
+GROUP BY c.name
+ORDER BY total_rentals DESC
+LIMIT 10;
+
+
+----------------------------------------------------------------
+QUERY 2: Customers Who Rented More Than the Average
+Business Problem: The loyalty programme team wants to identify high-engagement
+customers (those renting above the portfolio average) for a premium membership
+upgrade campaign.
+----------------------------------------------------------------
+
+SELECT
+    c.customer_id,
+    CONCAT(c.first_name, ' ', c.last_name)  AS customer_name,
+    COUNT(r.rental_id)                       AS total_rentals
+FROM customer c
+JOIN rental r ON c.customer_id = r.customer_id
+GROUP BY c.customer_id, c.first_name, c.last_name
+HAVING COUNT(r.rental_id) > (
+    SELECT AVG(rental_count)
+    FROM (
+        SELECT COUNT(rental_id) AS rental_count
+        FROM rental
+        GROUP BY customer_id
+    ) sub
+)
+ORDER BY total_rentals DESC;
+
+
+----------------------------------------------------------------
+QUERY 3: Total Spend per Customer (Including Zero-Spend)
+Business Problem: Finance needs a complete customer billing report that includes
+customers with no rental history, so that dormant accounts can be identified and
+targeted with win-back promotions.
+----------------------------------------------------------------
+
+SELECT
+    c.customer_id,
+    CONCAT(c.first_name, ' ', c.last_name)  AS customer_name,
+    COALESCE(SUM(p.amount), 0.00)            AS total_spent
+FROM customer c
+LEFT JOIN payment p ON c.customer_id = p.customer_id
+GROUP BY c.customer_id, c.first_name, c.last_name
+ORDER BY total_spent DESC;
+
+
+----------------------------------------------------------------
+QUERY 4: Film Count per Category (Including Empty Categories)
+Business Problem: The content catalogue team needs to know how many films exist
+in each genre, including any genre with no assigned films, to detect catalogue
+gaps and plan content acquisition.
+----------------------------------------------------------------
+
+SELECT
+    c.category_id,
+    c.name              AS category_name,
+    COUNT(fc.film_id)   AS film_count
+FROM category c
+LEFT JOIN film_category fc ON c.category_id = fc.category_id
+GROUP BY c.category_id, c.name
+ORDER BY film_count DESC;
+
+
+----------------------------------------------------------------
+QUERY 5: Films with Above-Average Rental Rates
+Business Problem: The pricing team wants to audit films priced above the portfolio
+average to validate their premium positioning and identify candidates for
+promotional discounting.
+----------------------------------------------------------------
+
+SELECT
+    film_id,
+    title,
+    rental_rate,
+    ROUND(
+        rental_rate - (SELECT AVG(rental_rate) FROM film),
+        2
+    ) AS rate_above_avg
+FROM film
+WHERE rental_rate > (SELECT AVG(rental_rate) FROM film)
+ORDER BY rental_rate DESC, title;
+
+
+----------------------------------------------------------------
+QUERY 6: Revenue Generated per Store
+Business Problem: Operations leadership needs a store-by-store revenue breakdown
+to benchmark performance across locations and allocate operational budgets fairly.
+----------------------------------------------------------------
+
+SELECT
+    s.store_id,
+    ci.city        AS store_city,
+    co.country     AS store_country,
+    SUM(p.amount)  AS total_revenue,
+    COUNT(DISTINCT r.rental_id) AS total_rentals
+FROM store s
+JOIN address a   ON s.address_id   = a.address_id
+JOIN city    ci  ON a.city_id      = ci.city_id
+JOIN country co  ON ci.country_id  = co.country_id
+JOIN staff   st  ON s.store_id     = st.store_id
+JOIN payment p   ON st.staff_id    = p.staff_id
+JOIN rental  r   ON p.rental_id    = r.rental_id
+GROUP BY s.store_id, ci.city, co.country
+ORDER BY total_revenue DESC;
+
+
+----------------------------------------------------------------
+QUERY 7: Top 10 Actors by Film Appearances
+Business Problem: The marketing team wants to know which actors appear in the
+most films so they can use talent recognition in promotional materials and
+franchise-style marketing campaigns.
+----------------------------------------------------------------
+
+SELECT
+    a.actor_id,
+    CONCAT(a.first_name, ' ', a.last_name)  AS actor_name,
+    COUNT(fa.film_id)                        AS film_count
+FROM actor a
+JOIN film_actor fa ON a.actor_id = fa.actor_id
+GROUP BY a.actor_id, a.first_name, a.last_name
+ORDER BY film_count DESC
+LIMIT 10;
+
+
+----------------------------------------------------------------
+QUERY 8: Currently Unreturned Rentals (Open Returns)
+Business Problem: The operations team needs a live list of all rentals where the
+film has not yet been returned, to follow up with customers and recover inventory
+before incurring replacement costs.
+----------------------------------------------------------------
+
+SELECT
+    r.rental_id,
+    r.rental_date,
+    f.title                                     AS film_title,
+    CONCAT(c.first_name, ' ', c.last_name)      AS customer_name,
+    c.email,
+    DATEDIFF(CURDATE(), r.rental_date)          AS days_out
+FROM rental r
+JOIN inventory i  ON r.inventory_id = i.inventory_id
+JOIN film      f  ON i.film_id      = f.film_id
+JOIN customer  c  ON r.customer_id  = c.customer_id
+WHERE r.return_date IS NULL
+ORDER BY days_out DESC;
+
+
+----------------------------------------------------------------
+QUERY 9: Inventory Utilisation Rate per Film per Store
+Business Problem: Store managers need to know which films are rented most
+relative to the number of copies on hand, so they can rebalance stock between
+stores and retire underperforming titles.
+----------------------------------------------------------------
+
+SELECT
+    f.title,
+    i.store_id,
+    COUNT(DISTINCT i.inventory_id)              AS copies_available,
+    COUNT(r.rental_id)                          AS times_rented,
+    ROUND(
+        COUNT(r.rental_id) /
+        NULLIF(COUNT(DISTINCT i.inventory_id), 0),
+        1
+    )                                           AS rentals_per_copy
+FROM film f
+JOIN inventory i  ON f.film_id      = i.film_id
+LEFT JOIN rental r ON i.inventory_id = r.inventory_id
+GROUP BY f.film_id, f.title, i.store_id
+ORDER BY rentals_per_copy DESC
+LIMIT 15;
+
+
+----------------------------------------------------------------
+QUERY 10: Monthly Revenue Trend
+Business Problem: The finance director needs a rolling monthly revenue report to
+track seasonal demand patterns, benchmark year-over-year growth, and forecast
+cash flow for the next quarter.
+----------------------------------------------------------------
+
+SELECT
+    YEAR(payment_date)                          AS payment_year,
+    MONTH(payment_date)                         AS payment_month,
+    DATE_FORMAT(payment_date, '%b %Y')          AS month_label,
+    COUNT(payment_id)                           AS transactions,
+    ROUND(SUM(amount), 2)                       AS monthly_revenue,
+    ROUND(AVG(amount), 2)                       AS avg_transaction_value
+FROM payment
+GROUP BY
+    YEAR(payment_date),
+    MONTH(payment_date),
+    DATE_FORMAT(payment_date, '%b %Y')
+ORDER BY payment_year, payment_month;
+
+
+================================================================
+  END OF INPUT QUERIES
+================================================================
