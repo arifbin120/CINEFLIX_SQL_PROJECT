@@ -8,7 +8,7 @@ Version: 1.0 | June 2025
 Overview
 CineFlix is a multi-store DVD rental business operating across several cities. This project presents a comprehensive SQL analytics case study covering the complete database schema, all entity relationships, and ten targeted business queries that extract actionable insights from the CineFlix data warehouse.
 
-Business Objectives
+#Business Objectives
 Identify top-performing film genres by rental volume to guide inventory procurement.
 Segment customers by rental activity and spending to prioritize marketing spend.
 Optimize inventory allocation by matching supply to demand at the store level.
@@ -37,14 +37,16 @@ Queries Included
 8	Currently Unreturned Rentals (Open Returns)	Operations
 9	Inventory Utilisation Rate per Film per Store	Store Managers
 10	Monthly Revenue Trend	Finance
-SQL Best Practices Applied
+
+#SQL Best Practices Applied
 JOIN vs Subquery: JOINs preferred for set-based filtering; correlated subqueries used only in HAVING/WHERE for scalar comparisons.
 LEFT JOIN for completeness: Used wherever business questions require rows with no matches (e.g. customers with no rentals, categories with no films).
 COALESCE for NULL safety: All SUM/AVG expressions from LEFT JOINs wrapped in COALESCE to return 0 or 0.00.
 NULLIF for division safety: Division operations use NULLIF(denominator, 0) to prevent divide-by-zero errors.
 Aliases for readability: All derived columns and tables use meaningful aliases for BI tool legibility.
 Deterministic ORDER BY: All paginated/ranked queries include a deterministic secondary sort (e.g. title) for stable ordering.
-File Structure
+
+#File Structure
 cineflix-sql-analytics/
 ├── README.md           # Project overview and documentation
 ├── input.txt           # All 10 SQL input queries
